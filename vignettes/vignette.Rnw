@@ -52,10 +52,15 @@ Version 2.0 implements many changes that make implementing Brattle-style figures
 
 
 \subsection{Installation}
-To install the package, run the following code:
+To install the package, first install \texttt{devtools} as you normally would. Then install using:
 <<installation, eval = FALSE>>=
-install.packages('N:/General/8070_BD_Litigation/gibbons/packages/BrattleExtras_2.0.tar.gz',
-  type = 'source')
+library(devtools)
+devtools::install_github('Brattle/BrattleExtras')
+@
+If this doesn't work, \href{https://github.com/Brattle/BrattleExtras/archive/master.zip}{download a zip file of this repository}, then install using:
+<<installation2, eval = FALSE>>=
+library(devtools)
+devtools::install_local('<path to zip file>')
 @
 Updates to the package will be announced on the Knowledge Sharing Center of Bhive. The package can be loaded as normal:
 <<library, message = TRUE>>=
@@ -84,16 +89,12 @@ These materials can be e-mailed to Charlie Gibbons. These objects should be broa
 
 
 \subsection{Use in litigation}
-With the changes in version 2.0, if you only use the \texttt{BrattleExtras} package to format figures (\eg you don't use the \texttt{ClusterVCV} function or call \texttt{BrattleColors} for other purposes), then you can just remove the code that loads the package and no other changes should be required before sharing outside Brattle. This is because Brattle formatting is set as defaults and the user no longer needs to call functions for formatting.
-
-If you do use internal functions directly in your code and you need to share that code with outside parties, either the entire package or the specific functions used must be shared in order for the code to operate. Because the package does not contain privileged or confidential information and the outside value of the intellectual property that it contains is relatively small, sharing the entire package (in its tarball form) is acceptable. Alternatives are presented in the sections below. Please e-mail me if you have any issues.
+The simplest approach is to remove references to the \texttt{BrattleExtras} package and its functions. This is simpler in version 2.0 as less direct usage of the functions is required. Because the package does not contain privileged or confidential information and the outside value of the intellectual property that it contains is relatively small, the installation instructions above can be provided to outside parties. Please e-mail me if you have any issues.
 
 
 \section{Bringing Brattle formatting to \texttt{ggplot}}
 The \texttt{ggplot} package is an incredibly powerful tool for creating figures. \texttt{ggplot} figures are now automatically placed in the  Brattle theme. Several examples are given below. For additional information, see the help files for the \texttt{BrattleExtras} and \texttt{ggplot2} packages and the \href{http://docs.ggplot2.org/current/}{online documentation for \texttt{ggplot}}.
 
-
-\subsection{Examples}
 First, we can display the hexidecimal codes for the Brattle color palette:
 <<palette>>=
 BrattleColors(5)
@@ -140,7 +141,7 @@ fig.scatter + geom_point(aes(color = cut)) + ggplot2::scale_color_discrete()
 The colored scatterplot is messy, so let's facet by cut instead.
 <<faceted>>=
 fig.facet <- fig.scatter + facet_wrap(~cut) +
-    ggtitle("Relationship between carats and price by cut")
+    ggtitle("Relationship between carats and price")
 fig.facet
 
 ## Note: Including the top (t) and right (r) axes improves the look
@@ -151,16 +152,17 @@ fig.facet + theme_brattle(include.tr.axes = TRUE)
 Lastly, we add footnotes to a figure using \texttt{ggfootnote}. This
 call should be done once the figure is otherwise complete; you cannot
 edit the figure after this call. The resulting object works perfectly
-fine with \texttt{ggsave}.
+fine with \texttt{ggsave}. See that you can provide multiple strings
+to the function and each
+appears as a separate line in the footer of the file. The function
+will not wrap lines, so you must break the strings as appropriate.
 <<footnotes>>=
 fig.footnote <- ggfootnote(fig.facet,
                            "Source: diamonds data from the ggplot package",
                            "Thanks Hadley!")
-fig.footnote
+ggsave("figure/fig_footnote.png", fig.footnote, width = 5, height = 4.5)
 @
-See that you can provide multiple strings to the function and each
-appears as a separate line in the footer of the file. The function
-will not wrap lines, so you must break the strings as appropriate.
+\includegraphics[width = 5in]{figure/fig_footnote}
 
 If you want to return to default \texttt{ggplot} behavior, unload the \texttt{BrattleExtras} package (with redundant coloring by cut just for expository purposes):
 <<unload>>=
@@ -171,31 +173,9 @@ fig.facet + geom_point(aes(color = cut))
 Some aspects of the Brattle style are not implemented. The $y$-axis is shown by default. The $x$-axis is always at the bottom of the plot and does not necessarily correspond to the $y$ value of 0. Labels of discrete data levels are shown in a legend, rather than in the plot area.
 
 
-\subsection{Litigation}
-If you don't want to turn the entire package over to the other side, then you can add the following code to define the functions innocuously.\footnote{Note that deprecated functions are included for completeness.}
-<<fig_lit, eval = FALSE>>=
-library(ggplot2)
-library(RColorBrewer)
-theme_brattle        <- function(...) {theme_bw()}
-scale_color_brattle  <- scale_color_discrete
-scale_colour_brattle <- scale_color_discrete
-scale_fill_brattle   <- scale_fill_discrete
-BrattleColors <- function(x = 5){
-  brewer.pal(x, "Dark2")
-}
-brattle_pal <- function(){
-  function(n){
-    brewer.pal(n, "Dark2")
-  }
-}
-@
-
-
 \section{Clustered standard errors}
 I have written a post on the Knowledge Sharing Center describing the basics of clustered standard errors.\footnote{For a good discussion of clustering, see \citet{cm}.} This package contains code to implement clustered standard errors in \texttt{R}.\footnote{As previously mentioned, you should probably be using the \texttt{plm} package instead.}
 
-
-\subsection{Example}
 As an example, we'll use the \texttt{mtcars} data set. We run an OLS model of MPG on weight with a variance-covariance matrix clustered at the cylinder level.
 <<cluster_ex>>=
 ## Since we detached BrattleExtras, we need to reload it
@@ -226,35 +206,6 @@ stargazer(reg, coeftest(reg, vcv), style = "aer", align = TRUE,
 We typically expect clustering to increase the standard errors, which happens for most of the variables in this case.
 \clearpage
 
-
-\subsection{Litigation}
-To supply the function without providing the package, include:
-<<cluster_fn, eval = FALSE>>=
-library(sandwich)
-ClusterVCV <- function (model, data, cluster.var){
-    if (!any(class(model) %in% c("lm", "glm"))) {
-        stop("'model' must be of class 'lm' or 'glm'")
-    }
-    if (!any(class(data) == "data.frame")) {
-        stop("'data' must be a data frame")
-    }
-    if (length(cluster.var) != 1L || !any(cluster.var == names(data))) {
-        stop("'cluster.var' must be the name of a single variable in 'data'")
-    }
-    cluster.var <- data[rownames(model$model), cluster.var]
-    cluster.var <- cluster.var[, drop = TRUE]
-    M <- length(unique(cluster.var))
-    N <- length(cluster.var)
-    K <- model$rank
-    dfc <- (M/(M - 1)) * ((N - 1)/(N - K))
-    uj <- apply(estfun(model), 2, function(x) {
-        tapply(x, cluster.var, sum)
-    })
-    vcv <- dfc * sandwich(model, meat. = crossprod(uj)/N)
-    return(vcv)
-}
-
-@
 
 \newpage
 \singlespace
