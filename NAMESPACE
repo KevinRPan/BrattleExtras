@@ -1,0 +1,3 @@
+exportPattern("(ClusterVCV|scale|BrattleColors|theme)")
+
+import(ggplot2, grid, gridExtra, assertive, sandwich)

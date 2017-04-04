@@ -1,0 +1,264 @@
+\documentclass[12pt]{article}
+\usepackage{cegdoc, dcolumn, natbib}
+\title{A Vignette for the \texttt{BrattleExtras v2.0} Package}
+\author{Charlie Gibbons\footnote{\href{mailto:charlie.gibbons@brattle.com}{ \texttt{charlie.gibbons@brattle.com}}} \\ The Brattle Group}
+
+%\VignetteIndexEntry{Introducing the BrattleExtras Package}
+%\VignetteDepends{lmtest, stargazer, RColorBrewer}
+%\VignetteEngine{knitr::knitr}
+
+\begin{document}
+
+<<'opts', echo = FALSE>>=
+library(knitr)
+opts_chunk$set(tidy = FALSE, fig.width = 5, fig.height = 4, out.width = "5in",
+               fig.align = "center", dev = "png", message = FALSE)
+@
+
+
+\maketitle
+\onehalfspace
+
+\section{Introduction}
+This vignette provides examples of the features in the \texttt{BrattleExtras} package. This package is designed to provide functions and other objects commonly used in Brattle projects. The package currently contains two sets of features:
+%
+\begin{itemize}
+\item Functions for implementing Brattle style for figures
+\item A function for implementing clustered standard errors in (generalized) linear models\footnote{This is retained for backwards compatibility only; you should look into the \texttt{plm} package for a more robust solution.}
+\end{itemize}
+%
+\textbf{None of the objects in the package contain privileged or confidential information.}
+
+
+\subsection{New in version 2.0}
+Version 2.0 implements many changes that make implementing Brattle-style figures even easier.
+\begin{itemize}
+\item In fact, Brattle formatting now happens by default. You no
+  longer need to call \texttt{theme\_brattle} in all instances or any
+  of the \texttt{scale\_*\_brattle} functions ever or manually change
+  points to Brattle blue.\footnote{We'll see, in the case of a faceted
+    figure, when you may want to call \texttt{theme\_brattle}.}
+  Everything happens by default. You can still use the
+  \texttt{scale\_*\_discrete} functions as you normally would with
+  \texttt{ggplot}.\footnote{You may want to use the version from the
+    \texttt{ggplot} package if you require more than five colors (the
+    maximum in the Brattle palette) in your figure. This
+    implementation is demonstrated later in this document.}
+\item You can add subtitles and footnotes to a \texttt{ggplot} figure
+  using \texttt{ggsubtitle} and \texttt{ggfootnote} respectively.
+\item The figures should look more polished and consistent with
+  Brattle style.
+\end{itemize}
+
+
+\subsection{Installation}
+To install the package, run the following code:
+<<installation, eval = FALSE>>=
+install.packages('N:/General/8070_BD_Litigation/gibbons/packages/BrattleExtras_2.0.tar.gz',
+  type = 'source')
+@
+Updates to the package will be announced on the Knowledge Sharing Center of Bhive. The package can be loaded as normal:
+<<library, message = TRUE>>=
+library(BrattleExtras)
+@
+Note that, as of version 2.0, the default \texttt{color} and \texttt{fill} scales from \texttt{ggplot} are overwritten to implement the Brattle color scheme.\footnote{You will run into difficulties if you have more than five items in your scale, as that is the number of colors in the Brattle palate used here. But a figure with more than five colors is difficult to interpret anyhow, so consider this a paternalistic brake.} You can revert to the standard \texttt{ggplot} implementation using \texttt{ggplot2::scale\_color\_discrete}, as an example.
+
+All objects contain help files that can be accessed as usual:
+<<help, eval = FALSE>>=
+help(package = "BrattleExtras")
+help("scale_color_brattle")
+?theme_brattle
+@
+
+
+\subsection{Contributions}
+All staff members are invited to submit objects for inclusion. To make a submission:
+%
+\begin{itemize}
+\item Submit the object
+\item Submit a working example
+\item Ensure that the object and example are \textbf{NOT} privileged or confidential.
+\end{itemize}
+%
+These materials can be e-mailed to Charlie Gibbons. These objects should be broadly useful at Brattle, rather than fulfill a niche need. If accepted for inclusion, you will be asked to complete a simple help file for the package documentation.
+
+
+\subsection{Use in litigation}
+With the changes in version 2.0, if you only use the \texttt{BrattleExtras} package to format figures (\eg you don't use the \texttt{ClusterVCV} function or call \texttt{BrattleColors} for other purposes), then you can just remove the code that loads the package and no other changes should be required before sharing outside Brattle. This is because Brattle formatting is set as defaults and the user no longer needs to call functions for formatting.
+
+If you do use internal functions directly in your code and you need to share that code with outside parties, either the entire package or the specific functions used must be shared in order for the code to operate. Because the package does not contain privileged or confidential information and the outside value of the intellectual property that it contains is relatively small, sharing the entire package (in its tarball form) is acceptable. Alternatives are presented in the sections below. Please e-mail me if you have any issues.
+
+
+\section{Bringing Brattle formatting to \texttt{ggplot}}
+The \texttt{ggplot} package is an incredibly powerful tool for creating figures. \texttt{ggplot} figures are now automatically placed in the  Brattle theme. Several examples are given below. For additional information, see the help files for the \texttt{BrattleExtras} and \texttt{ggplot2} packages and the \href{http://docs.ggplot2.org/current/}{online documentation for \texttt{ggplot}}.
+
+
+\subsection{Examples}
+First, we can display the hexidecimal codes for the Brattle color palette:
+<<palette>>=
+BrattleColors(5)
+BrattleColors("red")
+
+BrattleGrays()
+BrattleGrays("warm")
+@
+
+As an homage to \texttt{ggplot}, we'll provide examples using the
+\texttt{diamonds} data set from that package. A basic figure might
+show the relationship between the weight of a diamond (carats) and its
+price.\footnote{We do not attempt to make the most appealing figures;
+  instead, we just introduce basic functionality.}
+<<scatterplot>>=
+fig.scatter <- qplot(carat, price, data = diamonds) +
+    geom_point() +
+    ggtitle("Relationship between carats and price") +
+    xlab("Carats") + ylab("Price")
+fig.scatter
+@
+This is just a typical call to \texttt{ggplot}, yet it is set completely in the Brattle theme.
+
+We can also consider the relationship between price and quality (cut). A boxplot is effective at showing this distribution.
+<<boxplot>>=
+fig.boxplot <- ggplot(diamonds, aes(x = cut, y = price)) +
+    geom_boxplot() +
+    ggtitle("Boxplots of price by cut") +
+    ggsubtitle("The medians are surprisingly similar") +
+    xlab("Cut") + ylab("Price")
+fig.boxplot
+@
+Note the addition of a subtitle.
+
+We can combine these two sets of analyses by coloring the points in the scatterplot according to their cut.
+<<scatter_colored>>=
+fig.scatter + geom_point(aes(color = cut))
+@
+Again here, nothing is different from traditional calls to \texttt{ggplot}. We can revert to the standard \texttt{ggplot} color scheme (which may be useful if we have more than five color groups, the maximum for the Brattle palate):
+<<scatter_traditional>>=
+fig.scatter + geom_point(aes(color = cut)) + ggplot2::scale_color_discrete()
+@
+
+The colored scatterplot is messy, so let's facet by cut instead.
+<<faceted>>=
+fig.facet <- fig.scatter + facet_wrap(~cut) +
+    ggtitle("Relationship between carats and price by cut")
+fig.facet
+
+## Note: Including the top (t) and right (r) axes improves the look
+## Here's one instance where you may want to call theme_brattle
+fig.facet + theme_brattle(include.tr.axes = TRUE)
+@
+
+Lastly, we add footnotes to a figure using \texttt{ggfootnote}. This
+call should be done once the figure is otherwise complete; you cannot
+edit the figure after this call. The resulting object works perfectly
+fine with \texttt{ggsave}.
+<<footnotes>>=
+fig.footnote <- ggfootnote(fig.facet,
+                           "Source: diamonds data from the ggplot package",
+                           "Thanks Hadley!")
+fig.footnote
+@
+See that you can provide multiple strings to the function and each
+appears as a separate line in the footer of the file. The function
+will not wrap lines, so you must break the strings as appropriate.
+
+If you want to return to default \texttt{ggplot} behavior, unload the \texttt{BrattleExtras} package (with redundant coloring by cut just for expository purposes):
+<<unload>>=
+detach("package:BrattleExtras", unload = TRUE)
+fig.facet + geom_point(aes(color = cut))
+@
+
+Some aspects of the Brattle style are not implemented. The $y$-axis is shown by default. The $x$-axis is always at the bottom of the plot and does not necessarily correspond to the $y$ value of 0. Labels of discrete data levels are shown in a legend, rather than in the plot area.
+
+
+\subsection{Litigation}
+If you don't want to turn the entire package over to the other side, then you can add the following code to define the functions innocuously.\footnote{Note that deprecated functions are included for completeness.}
+<<fig_lit, eval = FALSE>>=
+library(ggplot2)
+library(RColorBrewer)
+theme_brattle        <- function(...) {theme_bw()}
+scale_color_brattle  <- scale_color_discrete
+scale_colour_brattle <- scale_color_discrete
+scale_fill_brattle   <- scale_fill_discrete
+BrattleColors <- function(x = 5){
+  brewer.pal(x, "Dark2")
+}
+brattle_pal <- function(){
+  function(n){
+    brewer.pal(n, "Dark2")
+  }
+}
+@
+
+
+\section{Clustered standard errors}
+I have written a post on the Knowledge Sharing Center describing the basics of clustered standard errors.\footnote{For a good discussion of clustering, see \citet{cm}.} This package contains code to implement clustered standard errors in \texttt{R}.\footnote{As previously mentioned, you should probably be using the \texttt{plm} package instead.}
+
+
+\subsection{Example}
+As an example, we'll use the \texttt{mtcars} data set. We run an OLS model of MPG on weight with a variance-covariance matrix clustered at the cylinder level.
+<<cluster_ex>>=
+## Since we detached BrattleExtras, we need to reload it
+library(BrattleExtras)
+
+## Turn cylinder into a factor
+mtcars$cyl <- factor(mtcars$cyl)
+reg <- lm(mpg ~ wt + cyl, data = mtcars)
+vcv <- ClusterVCV(reg, mtcars, "cyl")
+@
+Note that if any subsetting was applied by the call to the \texttt{lm} function or any observations need to be dropped due to missing values of the variables, \texttt{ClusterVCV} will take these adjustments into account.
+
+The best way to view the results is to load the \texttt{lmtest} package to gain access to the \texttt{coeftest} function. We compare the coefficients:
+<<coef_compare, message = FALSE>>=
+library(lmtest)
+summary(reg)
+coeftest(reg, vcv)
+@
+We can also present the results in a table using \texttt{stargazer}.
+<<stargazer, results = 'asis', message = FALSE>>=
+library(stargazer)
+stargazer(reg, coeftest(reg, vcv), style = "aer", align = TRUE,
+  title = "Comparison of non-clustered and clustered standard errors",
+  column.labels = c("Not clustered", "Clustered"),
+  model.names = FALSE, keep.stat = "n", dep.var.labels.include = FALSE)
+@
+
+We typically expect clustering to increase the standard errors, which happens for most of the variables in this case.
+\clearpage
+
+
+\subsection{Litigation}
+To supply the function without providing the package, include:
+<<cluster_fn, eval = FALSE>>=
+library(sandwich)
+ClusterVCV <- function (model, data, cluster.var){
+    if (!any(class(model) %in% c("lm", "glm"))) {
+        stop("'model' must be of class 'lm' or 'glm'")
+    }
+    if (!any(class(data) == "data.frame")) {
+        stop("'data' must be a data frame")
+    }
+    if (length(cluster.var) != 1L || !any(cluster.var == names(data))) {
+        stop("'cluster.var' must be the name of a single variable in 'data'")
+    }
+    cluster.var <- data[rownames(model$model), cluster.var]
+    cluster.var <- cluster.var[, drop = TRUE]
+    M <- length(unique(cluster.var))
+    N <- length(cluster.var)
+    K <- model$rank
+    dfc <- (M/(M - 1)) * ((N - 1)/(N - K))
+    uj <- apply(estfun(model), 2, function(x) {
+        tapply(x, cluster.var, sum)
+    })
+    vcv <- dfc * sandwich(model, meat. = crossprod(uj)/N)
+    return(vcv)
+}
+
+@
+
+\newpage
+\singlespace
+\bibliographystyle{apsr}
+\bibliography{vignette}
+
+\end{document}
