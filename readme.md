@@ -14,7 +14,7 @@ All staff members are invited to submit objects for inclusion. To make a submiss
 These materials can be e-mailed to Charlie Gibbons. These objects should be broadly useful at Brattle, rather than fulfill a niche need. If accepted for inclusion, you will be asked to complete a simple help file for the package documentation and submit the code and documentation to the Github repository.
 
 ## Installation
-To install the package, first install `devtools` as you normally would. Then, install `BrattleExtras` using `devtools::install_github('Brattle/BrattleExtras')`. If this doesn't work, [download a zip file of this repository](https://github.com/Brattle/BrattleExtras/archive/master.zip), then install using `devtoos::install_local('<path to zip file>')`
+To install the package, first install `devtools` as you normally would, then load the package. Install `BrattleExtras` using `devtools::install_github('Brattle/BrattleExtras')`. If this doesn't work, [download a zip file of this repository](https://github.com/Brattle/BrattleExtras/archive/master.zip), then install using `devtools::install_local('<path to zip file>')` Add `build_vignettes = TRUE` to the installation call to create the vignette.
 
 ## Examples and documentation
-See the vignette in the package for examples of usage.
+See the vignette in the package for examples of usage. You can access the vignette using `RShowDoc("vignette", package = "BrattleExtras")`.
