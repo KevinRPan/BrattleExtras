@@ -26,3 +26,7 @@ vignettes/\.Rhistory
 *.sty
 
 vignettes/vignette\.tex
+
+\.Rhistory
+
+\.Rbuildignore
