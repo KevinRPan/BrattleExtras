@@ -11,7 +11,11 @@ function(){
       citron       = "#d5d10e",  # 213 209  14
       olive        = "#8a8d09"   # 138 141   9
     )
-    unname(colors.brattle[seq_len(n)])
+    if(n <= length(colors.brattle)){
+        unname(colors.brattle[seq_len(n)])
+    } else {
+        viridis(n)
+    }
     ### Works, but requires 'scales' pacakge
     # manual_pal(unname(colors.brattle))(n)
   }

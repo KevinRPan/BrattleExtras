@@ -12,12 +12,16 @@ scale_fill_brattle(...)
 \arguments{
   \item{\dots}{Arguments passed to corresponding \code{ggplot} function (see below)}
 }
+\details{Note that the Brattle palette is only applied if there are five or fewer groups. If there are more than five groups, colors from the \code{viridis} package are applied.}
 \author{
 Charlie Gibbons}
-\seealso{\code{\link{ggplot2::scale_color_discrete}}, \code{\link{scale_fill_discrete}} from the \code{ggplot2} package
+\seealso{\code{\link{ggplot2::scale_colour_discrete}}, \code{\link{ggplot2::scale_fill_discrete}} from the \code{ggplot2} package
 }
 \examples{
 qplot(carat, price, data = diamonds, color = cut) + scale_color_discrete("Cut")
+
+### Revert to the ggplot version
+qplot(carat, price, data = diamonds, color = cut) + ggplot2::scale_color_discrete("Cut")
 }
 
 \keyword{color}

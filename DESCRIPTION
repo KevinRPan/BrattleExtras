@@ -6,7 +6,7 @@ Date: 2017-03-25
 Author: Charlie Gibbons
 Maintainer: Charlie Gibbons <charlie.gibbons@brattle.com>
 Description: Functions and other objects for Brattle projects
-Depends: ggplot2, grid, gridExtra, assertive, sandwich
+Depends: ggplot2, grid, gridExtra, assertive, sandwich, viridis
 Suggests: lmtest, knitr
 VignetteBuilder: knitr
 License: Licensed only for use by current staff at The Brattle Group
