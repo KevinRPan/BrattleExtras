@@ -69,6 +69,12 @@
     scale_color_discrete  <- ggplot2::scale_color_discrete
     scale_colour_discrete <- ggplot2::scale_colour_discrete
     scale_fill_discrete   <- ggplot2::scale_fill_discrete
+    scale_color_continuous  <- ggplot2::scale_color_continuous
+    scale_colour_continuous <- ggplot2::scale_colour_continuous
+    scale_fill_continuous   <- ggplot2::scale_fill_continuous
+    scale_color_gradient  <- ggplot2::scale_color_gradient
+    scale_colour_gradient <- ggplot2::scale_colour_gradient
+    scale_fill_gradient   <- ggplot2::scale_fill_gradient
     update_geom_defaults("point",     list(colour = "black"))
     update_geom_defaults("line",      list(colour = "black"))
     update_geom_defaults("bar",       list(fill   = "black"))
