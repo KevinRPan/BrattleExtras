@@ -75,6 +75,9 @@
     scale_color_gradient  <- ggplot2::scale_color_gradient
     scale_colour_gradient <- ggplot2::scale_colour_gradient
     scale_fill_gradient   <- ggplot2::scale_fill_gradient
+    scale_color_gradient2  <- ggplot2::scale_color_gradient2
+    scale_colour_gradient2 <- ggplot2::scale_colour_gradient2
+    scale_fill_gradient2   <- ggplot2::scale_fill_gradient2
     update_geom_defaults("point",     list(colour = "black"))
     update_geom_defaults("line",      list(colour = "black"))
     update_geom_defaults("bar",       list(fill   = "black"))
