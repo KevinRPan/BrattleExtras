@@ -2,11 +2,11 @@ Package: BrattleExtras
 Type: Package
 Title: Functions and other objects for Brattle projects
 Version: 2.0
-Date: 2017-03-25
+Date: 2017-05-31
 Author: Charlie Gibbons
 Maintainer: Charlie Gibbons <charlie.gibbons@brattle.com>
 Description: Functions and other objects for Brattle projects
-Depends: ggplot2, grid, gridExtra, assertive, sandwich, viridis
+Depends: ggplot2, grid, gridExtra, assertive, sandwich, viridis, GGally, colorspace
 Suggests: lmtest, knitr
 VignetteBuilder: knitr
 License: Licensed only for use by current staff at The Brattle Group
