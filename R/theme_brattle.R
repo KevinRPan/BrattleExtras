@@ -2,11 +2,11 @@ theme_brattle <- function (include.y.axis = TRUE, include.tr.axes = FALSE, facet
                            include.gridlines = TRUE, is.black.white = NULL, base_size = NULL, base_family = NULL)
 {
     if (!is.null(base_family) && !base_family %in% font.families()){
-        warning("Font family not found--using 'sans'", call = FALSE)
+        warning("Font family is deprecated--using 'sans'", call = FALSE)
         base_family = "sans"
     }
     if (!is.null(is.black.white)){
-        warning("'is.black.white' is depricated and does nothing")
+        warning("'is.black.white' is deprecated and does nothing")
     }
     base <- theme()
     if(!is.null(base_family)){
