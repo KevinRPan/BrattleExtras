@@ -1,5 +1,5 @@
 \documentclass[12pt]{article}
-\usepackage{cegdoc, dcolumn, natbib}
+\usepackage{hyperref}
 \title{A Vignette for the \texttt{BrattleExtras v2.0} Package}
 \author{Charlie Gibbons\footnote{\href{mailto:charlie.gibbons@brattle.com}{ \texttt{charlie.gibbons@brattle.com}}} \\ The Brattle Group}
 
@@ -171,45 +171,5 @@ fig.facet + geom_point(aes(color = cut))
 @
 
 Some aspects of the Brattle style are not implemented. The $y$-axis is shown by default. The $x$-axis is always at the bottom of the plot and does not necessarily correspond to the $y$ value of 0. Labels of discrete data levels are shown in a legend, rather than in the plot area.
-
-
-\section{Clustered standard errors}
-I have written a post on the Knowledge Sharing Center describing the basics of clustered standard errors.\footnote{For a good discussion of clustering, see \citet{cm}.} This package contains code to implement clustered standard errors in \texttt{R}.\footnote{As previously mentioned, you should probably be using the \texttt{plm} package instead.}
-
-As an example, we'll use the \texttt{mtcars} data set. We run an OLS model of MPG on weight with a variance-covariance matrix clustered at the cylinder level.
-<<cluster_ex>>=
-## Since we detached BrattleExtras, we need to reload it
-library(BrattleExtras)
-
-## Turn cylinder into a factor
-mtcars$cyl <- factor(mtcars$cyl)
-reg <- lm(mpg ~ wt + cyl, data = mtcars)
-vcv <- ClusterVCV(reg, mtcars, "cyl")
-@
-Note that if any subsetting was applied by the call to the \texttt{lm} function or any observations need to be dropped due to missing values of the variables, \texttt{ClusterVCV} will take these adjustments into account.
-
-The best way to view the results is to load the \texttt{lmtest} package to gain access to the \texttt{coeftest} function. We compare the coefficients:
-<<coef_compare, message = FALSE>>=
-library(lmtest)
-summary(reg)
-coeftest(reg, vcv)
-@
-We can also present the results in a table using \texttt{stargazer}.
-<<stargazer, results = 'asis', message = FALSE>>=
-library(stargazer)
-stargazer(reg, coeftest(reg, vcv), style = "aer", align = TRUE,
-  title = "Comparison of non-clustered and clustered standard errors",
-  column.labels = c("Not clustered", "Clustered"),
-  model.names = FALSE, keep.stat = "n", dep.var.labels.include = FALSE)
-@
-
-We typically expect clustering to increase the standard errors, which happens for most of the variables in this case.
-\clearpage
-
-
-\newpage
-\singlespace
-\bibliographystyle{apsr}
-\bibliography{vignette}
 
 \end{document}

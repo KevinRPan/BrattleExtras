@@ -3,7 +3,10 @@
 \title{
 Calculate clustered standard errors for (generalized) linear models}
 \description{
-Calculate clustered standard errors for (generalized) linear models}
+This function is retained for backward compatibility, but is otherwise
+deprecated. See the \code{multiwayvcov} package for a general
+alternative or the \code{plm} package for a linear fixed effects model
+version.}
 \usage{
 ClusterVCV(model, data, cluster.var)
 }
@@ -14,7 +17,7 @@ ClusterVCV(model, data, cluster.var)
 }
 }
 \details{
-The code implements the small sample correction of Cameron and Miller (2013). You should probably try using the \code{plm} package instead of this function for a more robust and complete alternative.
+The code implements the small sample correction of Cameron and Miller (2013).
 }
 \value{
 Variance-covariance matrix
