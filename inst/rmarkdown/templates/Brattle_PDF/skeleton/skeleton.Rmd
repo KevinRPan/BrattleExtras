@@ -9,7 +9,6 @@ output:
     fig_caption: true
     df_print: kable
     keep_tex: true
-documentclass: brattlereport
 ---
 
 *PRIVILEGED AND CONFIDENTIAL*
